@@ -1,6 +1,10 @@
 package com.dropp.app.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
@@ -12,12 +16,16 @@ import javax.validation.constraints.Size;
 @Entity
 @Table(name = "user_detail", uniqueConstraints = @UniqueConstraint(columnNames = {"username"}))
 @Data
+@Builder
 @Validated
-public class User {
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserDetail extends DateAudit {
 
     @Id
     @Column(name = "id")
-    private String id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     @NotEmpty
     @NotNull
@@ -25,8 +33,7 @@ public class User {
     @Column(name = "username")
     private String username;
 
-    @NotNull
-    @NotEmpty
+    @JsonIgnore
     @Size(min = 8, max = 30)
     @Column(name = "password")
     private String password;
@@ -53,6 +60,6 @@ public class User {
     private String contactNo;
 
     @Column(name = "fav_drops")
-    private int favDrops;
+    private Long favDrops;
 
 }
