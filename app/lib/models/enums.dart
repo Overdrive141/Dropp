@@ -4,3 +4,8 @@ enum AuthType {
   github,
   twitter,
 }
+
+enum AvatarType {
+  male,
+  female,
+}

@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "278890434462",
+    "project_id": "dropp-d6d3b",
+    "storage_bucket": "dropp-d6d3b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:278890434462:android:cfbdd776e3afd404d1d08f",
+        "android_client_info": {
+          "package_name": "com.ase.dropp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "278890434462-jvul273c93a0a47aj9mnpgknt0026p33.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ase.dropp",
+            "certificate_hash": "d51daa993699472fa4bb8ed5f1f166bb960bfc12"
+          }
+        },
+        {
+          "client_id": "278890434462-vaopob3sqhac3eeltglo23gce8ran2v0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDLDSV-8Xl-XHEM1hSFlB8kEUXvnDUIVLs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "278890434462-vaopob3sqhac3eeltglo23gce8ran2v0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "278890434462-rgee3gvddrjnd3gelvpk4be3c0eutifm.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ase.dropp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
