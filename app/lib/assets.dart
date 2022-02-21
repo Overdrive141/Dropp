@@ -3,4 +3,7 @@ abstract class AppAssets {
   static get facebookIcon => 'assets/images/facebook.png';
   static get twitterIcon => 'assets/images/twitter.png';
   static get githubIcon => 'assets/images/github.png';
+
+  static get avatarMale => 'assets/images/avatar1.png';
+  static get avatarFemale => 'assets/images/avatar2.png';
 }

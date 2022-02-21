@@ -2,6 +2,10 @@ import 'package:dropp/assets.dart';
 import 'package:dropp/colors.dart';
 import 'package:dropp/models/enums.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutterfire_ui/auth.dart';
+
+import '../profile/avatar_selection_view.dart';
 
 class AuthenticationView extends StatelessWidget {
   const AuthenticationView({Key? key}) : super(key: key);
@@ -15,82 +19,127 @@ class AuthenticationView extends StatelessWidget {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Spacer(),
-            const Spacer(),
-            Image.asset(
-              'assets/images/logo.png',
-              width: MediaQuery.of(context).size.width / 3,
-            ),
-            const Spacer(),
-            const Spacer(),
-            OutlinedButton(
-              onPressed: () => handleAuth(context),
-              child: const Text(
-                'Sign in with Email',
-                style: TextStyle(color: Colors.black, fontSize: 16),
-              ),
-            ),
-            const Spacer(),
-            const Text(
-              'OR',
-              style: TextStyle(color: Colors.grey),
-            ),
-            const Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Flexible(
-                    child: OAuthButton(
-                  alignment: Alignment.bottomRight,
-                  type: AuthType.google,
-                  onTap: () => handleAuth(context),
-                )),
-                const SizedBox(width: 16),
-                Flexible(
-                    child: OAuthButton(
-                  alignment: Alignment.bottomLeft,
-                  type: AuthType.facebook,
-                  onTap: () => handleAuth(context),
-                )),
-              ],
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Flexible(
-                    child: OAuthButton(
-                  alignment: Alignment.topRight,
-                  type: AuthType.github,
-                  onTap: () => handleAuth(context),
-                )),
-                const SizedBox(width: 16),
-                Flexible(
-                    child: OAuthButton(
-                  alignment: Alignment.topLeft,
-                  type: AuthType.twitter,
-                  onTap: () => handleAuth(context),
-                )),
-              ],
-            ),
-            const Spacer(),
-          ],
-        ),
-      ),
-      bottomNavigationBar: Container(
-        color: AppColors.primary,
-        height: 50,
+  void showAvatarSelectionView(BuildContext context) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const AvatarSelectionView(),
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AuthFlowBuilder<OAuthController>(
+        config: const GoogleProviderConfiguration(clientId: ''),
+        listener: (oldState, newState, __) {
+          if (oldState != newState && newState is SignedIn) {
+            showAvatarSelectionView(context);
+          }
+        },
+        builder: (context, state, controller, _) {
+          return Stack(
+            children: [
+              Scaffold(
+                backgroundColor: Colors.white,
+                body: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Spacer(),
+                      const Spacer(),
+                      Image.asset(
+                        'assets/images/logo.png',
+                        width: MediaQuery.of(context).size.width / 3,
+                      ),
+                      const Spacer(),
+                      const Spacer(),
+                      OutlinedButton(
+                        onPressed: () => handleAuth(context),
+                        child: const Text(
+                          'Sign in with Email',
+                          style: TextStyle(color: Colors.black, fontSize: 16),
+                        ),
+                      ),
+                      const Spacer(),
+                      const Text(
+                        'OR',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                      if (state is AuthFailed)
+                        Text(
+                          state.exception.toString(),
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                      const Spacer(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Flexible(
+                              child: OAuthButton(
+                            alignment: Alignment.bottomRight,
+                            type: AuthType.google,
+                            onTap: () {
+                              controller.auth.currentUser == null
+                                  ? controller.signInWithProvider(
+                                      TargetPlatform.android)
+                                  : showAvatarSelectionView(context);
+                            },
+                          )),
+                          const SizedBox(width: 16),
+                          Flexible(
+                              child: OAuthButton(
+                            alignment: Alignment.bottomLeft,
+                            type: AuthType.facebook,
+                            onTap: () async {
+                              handleAuth(context);
+                              await controller.auth.signOut();
+                            },
+                          )),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Flexible(
+                              child: OAuthButton(
+                            alignment: Alignment.topRight,
+                            type: AuthType.github,
+                            onTap: () => handleAuth(context),
+                          )),
+                          const SizedBox(width: 16),
+                          Flexible(
+                              child: OAuthButton(
+                            alignment: Alignment.topLeft,
+                            type: AuthType.twitter,
+                            onTap: () => handleAuth(context),
+                          )),
+                        ],
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
+                ),
+                bottomNavigationBar: Container(
+                  color: AppColors.primary,
+                  height: 30,
+                ),
+              ),
+              if (state is SigningIn)
+                Positioned.fill(
+                  child: Container(
+                    color: Colors.black87,
+                    child: SpinKitSpinningLines(
+                      color: AppColors.primary,
+                      size: 80.0,
+                    ),
+                  ),
+                )
+            ],
+          );
+        });
   }
 }
 
