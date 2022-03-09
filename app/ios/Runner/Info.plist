@@ -43,5 +43,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>DART_DEFINES</key>
+	<string>$(DART_DEFINES)</string>
 </dict>
 </plist>
