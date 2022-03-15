@@ -38,6 +38,8 @@ dependencies:
   flutterfire_ui: ^0.3.4
   google_sign_in: ^5.2.4
   flutter_spinkit: ^5.1.0
+  google_maps_flutter: ^2.1.2
+  fab_circular_menu: ^1.0.2
 
 dev_dependencies:
   flutter_test:
@@ -63,6 +65,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    - assets/markers/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

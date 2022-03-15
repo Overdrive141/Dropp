@@ -21,6 +21,16 @@ if (flutterVersionName == null) {
     flutterVersionName = '1.0'
 }
 
+def dartEnvironmentVariables = []
+if (project.hasProperty('dart-defines')) {
+    dartEnvironmentVariables = project.property('dart-defines')
+        .split(',')
+        .collectEntries { entry ->
+            def pair = new String(entry.decodeBase64(), 'UTF-8').split('=')
+            [(pair.first()): pair.last()]
+        }
+}
+
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-android'
@@ -49,6 +59,12 @@ android {
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+
+        manifestPlaceholders += [ GOOGLE_MAPS_API_KEY: dartEnvironmentVariables.GOOGLE_MAPS_API_KEY ]
+
+        // To use in app specific strings
+        // E.g. <string name="com.project.new" translatable="false">@string/google_maps_api_key</string> 
+        // resValue "string", "google_maps_api_key", dartEnvironmentVariables.GOOGLE_MAPS_API_KEY
     }
 
     buildTypes {
