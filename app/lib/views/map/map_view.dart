@@ -1,12 +1,18 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:background_location/background_location.dart';
 import 'package:dropp/assets.dart';
+import 'package:dropp/services/location_service.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class MapView extends StatefulWidget {
+import '../../services/compass_service.dart';
+
+class MapView extends ConsumerStatefulWidget {
   final bool enableLocationPicker;
   final Function(LatLng)? onLocationSelected;
   final Function(LatLng, double zoom)? onCameraMove;
@@ -27,28 +33,30 @@ class MapView extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<MapView> createState() => MapViewState();
+  MapViewState createState() => MapViewState();
 }
 
-class MapViewState extends State<MapView> {
-  late GoogleMapController _mapController;
+class MapViewState extends ConsumerState<MapView> {
+  GoogleMapController? _mapController;
 
-  static const LatLng _kdefaultCenter =
-      LatLng(42.30554813345436, -83.06151891841292);
-  static const double _kdefaultZoom = 6;
-  late BitmapDescriptor pinLocationIcon;
+  LatLng _currentPosition = _kdefaultCenter;
 
-  LatLng? _selectedLocation;
+  static const _kdefaultCenter = LatLng(42.30554813345436, -83.06151891841292);
+  static const double _kdefaultZoom = 18;
+  static const double _kdefaultTilt = 90;
+  static const _kdefaultZoomBounds = MinMaxZoomPreference(16, 20);
 
-  Marker x = const Marker(
-    markerId: MarkerId('selectedLocation'),
+  Marker avatar = const Marker(
+    markerId: MarkerId('avatar'),
     position: _kdefaultCenter,
   );
 
-  Future<Uint8List> getBytesFromAsset(String path, int width) async {
-    ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
-        targetWidth: width);
+  Future<Uint8List> getBytesFromAsset() async {
+    ByteData data = await rootBundle.load(AppAssets.marker0);
+    ui.Codec codec = await ui.instantiateImageCodec(
+      data.buffer.asUint8List(),
+      targetWidth: 150,
+    );
     ui.FrameInfo fi = await codec.getNextFrame();
     return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
         .buffer
@@ -57,82 +65,83 @@ class MapViewState extends State<MapView> {
 
   @override
   initState() {
+    _loadMarker();
     super.initState();
-
-    _updateMarker(150);
-    if (widget.defaultLocation != null) {
-      _selectedLocation = widget.defaultLocation;
-    }
   }
 
   void _onMapCreated(GoogleMapController controller) async {
     _mapController = controller;
-
-    _mapController.setMapStyle(_mapStyle);
-    // if (widget.enableLocationPicker) {
-    //   final showCurrentLocation = await _model.askForCurrentLocation();
-    //   if (!showCurrentLocation) return;
-    //   final _location = await _model.getCurrentLocation();
-    //   if (_location != null) {
-    //     _mapController.animateCamera(CameraUpdate.newLatLng(_location));
-    //   }
-    // }
+    _mapController?.setMapStyle(_mapStyle);
   }
 
-  void _updateMarker(int width) async {
-    final bytes = await getBytesFromAsset(AppAssets.marker0, width);
-    pinLocationIcon = BitmapDescriptor.fromBytes(bytes);
-    x = Marker(
-      markerId: const MarkerId('selectedLocation'),
-      position: _kdefaultCenter,
-      icon: pinLocationIcon,
-    );
+  Future _loadMarker() async {
+    final bytes = await getBytesFromAsset();
+    avatar = avatar.copyWith(iconParam: BitmapDescriptor.fromBytes(bytes));
     setState(() {});
   }
 
-  void _handleCameraMove(CameraPosition position) {
-    widget.onCameraMove?.call(position.target, position.zoom);
-    _updateMarker((position.zoom ~/ 20) * 150);
-    // getBytesFromAsset(AppAssets.marker0, (position.zoom ~/ 20) * 150).then((s) {
-    //   pinLocationIcon = BitmapDescriptor.fromBytes(s);
-    //   x = Marker(
-    //     markerId: const MarkerId('selectedLocation'),
-    //     position: _kdefaultCenter,
-    //     icon: pinLocationIcon,
-    //   );
-    //   setState(() {});
-    // });
+  Future _updateMarker() async {
+    avatar = avatar.copyWith(positionParam: _currentPosition);
+    setState(() {});
   }
 
-  void _handleSelectedLocation(LatLng location) {
-    setState(() {
-      _selectedLocation = location;
-    });
-    widget.onLocationSelected?.call(location);
+  void _updateLocation(Location? oldLocation, Location? newLocation) async {
+    print('_updateLocation');
+    if (newLocation != null) {
+      final newPosition = LatLng(
+        newLocation.latitude ?? _currentPosition.latitude,
+        newLocation.longitude ?? _currentPosition.longitude,
+      );
+      if (newPosition == _currentPosition) {
+        return;
+      }
+      _currentPosition = newPosition;
+      await _updateMarker();
+      _mapController?.animateCamera(CameraUpdate.newLatLng(_currentPosition));
+    }
+  }
+
+  void _handleCompass(double? oldBearing, double? newBearing) {
+    print('_handleCompass');
+    if (newBearing != null) {
+      _mapController?.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: _currentPosition,
+            zoom: 18,
+            tilt: 80,
+            bearing: newBearing,
+          ),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<Location?>(LocationService.provider, _updateLocation);
+    ref.listen<double?>(CompassService.provider, _handleCompass);
+
     return GoogleMap(
       mapType: MapType.normal,
-      onCameraMove: _handleCameraMove,
+      // onCameraMove: _handleCameraMove,
       initialCameraPosition: const CameraPosition(
-          target: _kdefaultCenter, zoom: 20, tilt: 80, bearing: 10),
+        target: _kdefaultCenter,
+        zoom: _kdefaultZoom,
+        tilt: _kdefaultTilt,
+      ),
       zoomControlsEnabled: false,
       compassEnabled: false,
-      myLocationEnabled: true,
+      myLocationEnabled: false,
       myLocationButtonEnabled: false,
       onMapCreated: _onMapCreated,
-      // onTap: (_) {
-      //   _mapController.animateCamera(CameraUpdate.newCameraPosition(
-      //     CameraPosition(
-      //         zoom: 19,
-      //         tilt: 80,
-      //         target: _kdefaultCenter,
-      //         bearing: Random().nextDouble() * 360),
-      //   ));
-      // },
-      markers: {x},
+      minMaxZoomPreference: _kdefaultZoomBounds,
+      buildingsEnabled: true,
+      indoorViewEnabled: false,
+      mapToolbarEnabled: false,
+      tiltGesturesEnabled: false,
+      trafficEnabled: false,
+      markers: {avatar},
     );
   }
 }
