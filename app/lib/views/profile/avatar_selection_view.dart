@@ -1,6 +1,7 @@
 import 'package:dropp/assets.dart';
 import 'package:dropp/colors.dart';
 import 'package:dropp/models/enums.dart';
+import 'package:dropp/views/home/home_view.dart';
 import 'package:flutter/material.dart';
 
 class AvatarSelectionView extends StatefulWidget {
@@ -12,6 +13,15 @@ class AvatarSelectionView extends StatefulWidget {
 
 class _AvatarSelectionViewState extends State<AvatarSelectionView> {
   AvatarType selectedType = AvatarType.male;
+
+  void showHomeView(BuildContext context) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const HomeView(),
+      ),
+    );
+  }
 
   void setAvatarType(AvatarType type) {
     selectedType = type;
@@ -72,12 +82,13 @@ class _AvatarSelectionViewState extends State<AvatarSelectionView> {
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).clearSnackBars();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Feature Coming soon!'),
-                    ),
-                  );
+                  // ScaffoldMessenger.of(context).clearSnackBars();
+                  // ScaffoldMessenger.of(context).showSnackBar(
+                  //   const SnackBar(
+                  //     content: Text('Feature Coming soon!'),
+                  //   ),
+                  // );
+                  showHomeView(context);
                 },
                 child: const Padding(
                   padding: EdgeInsets.symmetric(vertical: 16.0),
