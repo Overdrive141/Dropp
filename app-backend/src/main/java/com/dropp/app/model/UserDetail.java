@@ -1,5 +1,6 @@
 package com.dropp.app.model;
 
+import com.dropp.app.model.enums.Avatar;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,7 +15,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name = "user_detail", uniqueConstraints = @UniqueConstraint(columnNames = {"username"}))
+@Table(name = "user_detail")
 @Data
 @Builder
 @Validated
@@ -30,7 +31,7 @@ public class UserDetail extends DateAudit {
     @NotEmpty
     @NotNull
     @Size(min = 1, max = 20)
-    @Column(name = "username")
+    @Column(name = "username", unique = true)
     private String username;
 
     @JsonIgnore
@@ -40,20 +41,8 @@ public class UserDetail extends DateAudit {
 
     @NotNull
     @NotEmpty
-    @Size(min = 1, max = 35)
-    @Column(name = "first_name")
-    private String firstName;
-
-    @NotNull
-    @NotEmpty
-    @Size(min = 1, max = 35)
-    @Column(name = "last_name")
-    private String lastName;
-
-    @NotNull
-    @NotEmpty
     @Email
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
     private String email;
 
     @Column(name = "contact_no")
@@ -61,5 +50,11 @@ public class UserDetail extends DateAudit {
 
     @Column(name = "fav_drops")
     private Long favDrops;
+
+    @NotEmpty
+    @NotNull
+    @Size(max = 5)
+    @Enumerated(EnumType.ORDINAL)
+    private Avatar avatar;
 
 }

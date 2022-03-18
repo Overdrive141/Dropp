@@ -25,17 +25,21 @@ public class DropDetailService {
     }
 
     public List<DropDetail> getDropsForUser(Long userId) {
+        existsById(userId);
         return dropDetailRepository.findByUserId(userId);
     }
 
     public DropDetail addDrop(Long userId, DropRequest dropRequest) {
-        Boolean isUserPresent = userDetailRepository.existsById(userId);
-        if (!isUserPresent) {
-            throw new UserNotFoundException("User not found with id:" + userId);
-        }
+        existsById(userId);
         DropDetail dropDetail = transformer.map(dropRequest);
         dropDetail.setUserId(userId);
         dropDetail.setActive(true);
         return dropDetailRepository.save(dropDetail);
+    }
+
+    private void existsById(Long userId) {
+        if (!userDetailRepository.existsById(userId)) {
+            throw new UserNotFoundException("User not found with id:" + userId);
+        }
     }
 }
