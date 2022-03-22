@@ -1,5 +1,11 @@
 package com.dropp.app;
 
+import java.io.FileInputStream;
+
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -16,7 +22,7 @@ public class Application {
 
            FirebaseApp.initializeApp(options);
         } catch (Exception error) {
-           error.printStackTrace();
+           
        }
 		SpringApplication.run(Application.class, args);
 	}
