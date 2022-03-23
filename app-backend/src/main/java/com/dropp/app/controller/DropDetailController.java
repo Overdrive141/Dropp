@@ -65,10 +65,10 @@ public class DropDetailController {
         return dropDetailService.unstarDrop(userId, dropId);
     }
 
-//    @GetMapping("/user/{userId}/star")
-//    public Set<DropDetailDTO> getStarredDrops(@PathVariable @NotNull @NotEmpty Long userId, @NotNull @NotEmpty @RequestHeader("Authorization") String authorizationHeader) throws FirebaseAuthException {
-//        return dropDetailService.getStarredDrops(userId);
-//    }
+    @GetMapping("/user/{userId}/star")
+    public Set<DropDetailDTO> getStarredDrops(@PathVariable @NotNull @NotEmpty Long userId, @NotNull @NotEmpty @RequestHeader("Authorization") String authorizationHeader) throws FirebaseAuthException {
+        return dropDetailService.getStarredDrops(userId);
+    }
 
     @PostMapping("/user/{userId}/drop/{dropId}/explore")
     public DropDetailDTO exploreDrop(@PathVariable @NotNull @NotEmpty Long userId, @PathVariable @NotNull @NotEmpty Long dropId, @NotNull @NotEmpty @RequestHeader("Authorization") String authorizationHeader) throws FirebaseAuthException {
