@@ -13,6 +13,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Set;
 
 @Entity
 @Table(name = "user_detail")
@@ -25,7 +26,7 @@ public class UserDetail extends DateAudit {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotEmpty
@@ -51,10 +52,14 @@ public class UserDetail extends DateAudit {
     @Column(name = "fav_drops")
     private Long favDrops;
 
-    @NotEmpty
     @NotNull
-    @Size(max = 5)
     @Enumerated(EnumType.ORDINAL)
     private Avatar avatar;
+
+    @OneToMany(mappedBy = "userDetail")
+    private Set<StarredDrop> starredDrops;
+
+    @OneToMany(mappedBy = "userDetail")
+    private Set<ExploredDrop> exploredDrops;
 
 }
