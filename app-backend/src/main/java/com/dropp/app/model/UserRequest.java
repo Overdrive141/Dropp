@@ -32,9 +32,7 @@ public class UserRequest {
     @Size(min = 10, max = 10)
     private String contactNo;
 
-    @NotEmpty
     @NotNull
-    @Size(max = 5)
     @Enumerated(EnumType.ORDINAL)
     private Avatar avatar;
 }
