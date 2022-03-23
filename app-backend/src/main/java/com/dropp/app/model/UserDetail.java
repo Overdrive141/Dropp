@@ -26,7 +26,7 @@ public class UserDetail extends DateAudit {
 
     @Id
     @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotEmpty
@@ -58,5 +58,8 @@ public class UserDetail extends DateAudit {
 
     @OneToMany(mappedBy = "userDetail")
     private Set<StarredDrop> starredDrops;
+
+    @OneToMany(mappedBy = "userDetail")
+    private Set<ExploredDrop> exploredDrops;
 
 }
