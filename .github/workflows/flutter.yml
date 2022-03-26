@@ -1,8 +1,8 @@
 name: Flutter Test
 
-on:
+on: 
   pull_request:
-    branches: [ main ]
+    branches: main
     paths:
     - 'app/**'
 
@@ -27,8 +27,7 @@ jobs:
 #     - run: flutter packages pub run build_runner build
     - run: flutter test --coverage
     
-    - name: Upload coverage to codecov
-      run: curl -s https://codecov.io/bash
-      shell: bash
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v2
       
     
