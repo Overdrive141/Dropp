@@ -1,17 +1,24 @@
 import 'package:dropp/assets.dart';
 import 'package:dropp/colors.dart';
 import 'package:dropp/models/enums.dart';
+import 'package:dropp/services/user_service.dart';
 import 'package:dropp/views/home/home_view.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class AvatarSelectionView extends StatefulWidget {
-  const AvatarSelectionView({Key? key}) : super(key: key);
+class AvatarSelectionView extends ConsumerStatefulWidget {
+  final VoidCallback? onDone;
+  const AvatarSelectionView({
+    Key? key,
+    this.onDone,
+  }) : super(key: key);
 
   @override
-  State<AvatarSelectionView> createState() => _AvatarSelectionViewState();
+  ConsumerState<AvatarSelectionView> createState() =>
+      _AvatarSelectionViewState();
 }
 
-class _AvatarSelectionViewState extends State<AvatarSelectionView> {
+class _AvatarSelectionViewState extends ConsumerState<AvatarSelectionView> {
   AvatarType selectedType = AvatarType.male;
 
   void showHomeView(BuildContext context) {
@@ -26,10 +33,12 @@ class _AvatarSelectionViewState extends State<AvatarSelectionView> {
   void setAvatarType(AvatarType type) {
     selectedType = type;
     setState(() {});
+    ref.read(UserService.provider).type = type;
   }
 
   @override
   Widget build(BuildContext context) {
+    final avatar = ref.watch(UserService.provider).type;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
@@ -63,14 +72,14 @@ class _AvatarSelectionViewState extends State<AvatarSelectionView> {
                 const SizedBox(width: 16),
                 Flexible(
                     child: AvatarOption(
-                  isSelected: selectedType == AvatarType.male,
+                  isSelected: avatar == AvatarType.male,
                   type: AvatarType.male,
                   onTap: () => setAvatarType(AvatarType.male),
                 )),
                 const SizedBox(width: 32),
                 Flexible(
                     child: AvatarOption(
-                  isSelected: selectedType == AvatarType.female,
+                  isSelected: avatar == AvatarType.female,
                   type: AvatarType.female,
                   onTap: () => setAvatarType(AvatarType.female),
                 )),
@@ -82,13 +91,11 @@ class _AvatarSelectionViewState extends State<AvatarSelectionView> {
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: () {
-                  // ScaffoldMessenger.of(context).clearSnackBars();
-                  // ScaffoldMessenger.of(context).showSnackBar(
-                  //   const SnackBar(
-                  //     content: Text('Feature Coming soon!'),
-                  //   ),
-                  // );
-                  showHomeView(context);
+                  if (widget.onDone != null) {
+                    widget.onDone?.call();
+                  } else {
+                    showHomeView(context);
+                  }
                 },
                 child: const Padding(
                   padding: EdgeInsets.symmetric(vertical: 16.0),
