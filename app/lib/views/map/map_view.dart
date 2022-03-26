@@ -1,16 +1,19 @@
+import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:background_location/background_location.dart';
 import 'package:dropp/assets.dart';
 import 'package:dropp/services/location_service.dart';
-
+import 'package:dropp/services/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../services/compass_service.dart';
+import '../../services/permission_service.dart';
+import '../dropp_view/story_view.dart';
 
 class MapView extends ConsumerStatefulWidget {
   final bool enableLocationPicker;
@@ -44,18 +47,27 @@ class MapViewState extends ConsumerState<MapView> {
   static const _kdefaultCenter = LatLng(42.30554813345436, -83.06151891841292);
   static const double _kdefaultZoom = 18;
   static const double _kdefaultTilt = 90;
-  static const _kdefaultZoomBounds = MinMaxZoomPreference(16, 20);
+  static const _kdefaultZoomBounds = MinMaxZoomPreference(17, 20);
 
   Marker avatar = const Marker(
     markerId: MarkerId('avatar'),
     position: _kdefaultCenter,
   );
 
-  Future<Uint8List> getBytesFromAsset() async {
-    ByteData data = await rootBundle.load(AppAssets.marker0);
+  void showContent() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const MoreStories(),
+      ),
+    );
+  }
+
+  Future<Uint8List> getBytesFromAsset(String path, int width) async {
+    ByteData data = await rootBundle.load(path);
     ui.Codec codec = await ui.instantiateImageCodec(
       data.buffer.asUint8List(),
-      targetWidth: 150,
+      targetWidth: width,
     );
     ui.FrameInfo fi = await codec.getNextFrame();
     return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
@@ -63,10 +75,17 @@ class MapViewState extends ConsumerState<MapView> {
         .asUint8List();
   }
 
+  Set<Marker> markers = {};
+
   @override
   initState() {
     _loadMarker();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   void _onMapCreated(GoogleMapController controller) async {
@@ -74,9 +93,26 @@ class MapViewState extends ConsumerState<MapView> {
     _mapController?.setMapStyle(_mapStyle);
   }
 
+  Future _loadDropMarkers() async {
+    final bytes = await getBytesFromAsset(AppAssets.dropMarker, 200);
+    markers = List.filled(20, 0)
+        .map((m) => Marker(
+            onTap: showContent,
+            icon: BitmapDescriptor.fromBytes(bytes),
+            markerId: MarkerId(Random().nextInt(1000).toString()),
+            position: LatLng(
+                _kdefaultCenter.latitude + (Random().nextDouble() / 100),
+                _kdefaultCenter.longitude + (Random().nextDouble() / 100))))
+        .toSet();
+
+    setState(() {});
+  }
+
   Future _loadMarker() async {
-    final bytes = await getBytesFromAsset();
+    final image = ref.read(UserService.provider).avatarMarker;
+    final bytes = await getBytesFromAsset(image, 150);
     avatar = avatar.copyWith(iconParam: BitmapDescriptor.fromBytes(bytes));
+    await _loadDropMarkers();
     setState(() {});
   }
 
@@ -86,7 +122,6 @@ class MapViewState extends ConsumerState<MapView> {
   }
 
   void _updateLocation(Location? oldLocation, Location? newLocation) async {
-    print('_updateLocation');
     if (newLocation != null) {
       final newPosition = LatLng(
         newLocation.latitude ?? _currentPosition.latitude,
@@ -102,7 +137,6 @@ class MapViewState extends ConsumerState<MapView> {
   }
 
   void _handleCompass(double? oldBearing, double? newBearing) {
-    print('_handleCompass');
     if (newBearing != null) {
       _mapController?.animateCamera(
         CameraUpdate.newCameraPosition(
@@ -117,14 +151,20 @@ class MapViewState extends ConsumerState<MapView> {
     }
   }
 
+  void _handleAvatarChange(UserService? _, UserService us) {
+    _loadMarker();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final isLocationEnabled = ref.watch(PermissionService.provider);
+
     ref.listen<Location?>(LocationService.provider, _updateLocation);
     ref.listen<double?>(CompassService.provider, _handleCompass);
+    ref.listen<UserService>(UserService.provider, _handleAvatarChange);
 
     return GoogleMap(
       mapType: MapType.normal,
-      // onCameraMove: _handleCameraMove,
       initialCameraPosition: const CameraPosition(
         target: _kdefaultCenter,
         zoom: _kdefaultZoom,
@@ -141,7 +181,7 @@ class MapViewState extends ConsumerState<MapView> {
       mapToolbarEnabled: false,
       tiltGesturesEnabled: false,
       trafficEnabled: false,
-      markers: {avatar},
+      markers: {avatar}..addAll(!isLocationEnabled ? markers : {}),
     );
   }
 }

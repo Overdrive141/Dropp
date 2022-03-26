@@ -13,7 +13,7 @@ class LocationService extends StateNotifier<Location?> {
 
   void track() {
     stopTracking();
-    BackgroundLocation.startLocationService();
+    BackgroundLocation.startLocationService(distanceFilter: 20);
     BackgroundLocation.getLocationUpdates((location) {
       state = location;
     });

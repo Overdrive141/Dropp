@@ -1,20 +1,48 @@
 import 'package:dropp/assets.dart';
 import 'package:dropp/colors.dart';
 import 'package:dropp/models/enums.dart';
+import 'package:dropp/services/user_service.dart';
+import 'package:dropp/views/home/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutterfire_ui/auth.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../profile/avatar_selection_view.dart';
 
-class AuthenticationView extends StatelessWidget {
+class AuthenticationView extends ConsumerStatefulWidget {
   const AuthenticationView({Key? key}) : super(key: key);
+
+  @override
+  ConsumerState<AuthenticationView> createState() => _AuthenticationViewState();
+}
+
+class _AuthenticationViewState extends ConsumerState<AuthenticationView> {
+  @override
+  void initState() {
+    final isLoggedIn = ref.read(UserService.provider).user != null;
+    if (isLoggedIn) {
+      WidgetsBinding.instance?.addPostFrameCallback((_) {
+        showHomeView(context);
+      });
+    }
+    super.initState();
+  }
 
   void handleAuth(BuildContext context) {
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Feature Coming soon!'),
+      ),
+    );
+  }
+
+  void showHomeView(BuildContext context) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const HomeView(),
       ),
     );
   }
