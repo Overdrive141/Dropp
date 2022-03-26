@@ -1,4 +1,5 @@
 # Dropp
+[![Flutter Test](https://github.com/Overdrive141/Dropp/actions/workflows/flutter.yml/badge.svg)](https://github.com/Overdrive141/Dropp/actions/workflows/flutter.yml)
 [![Java CI with Maven](https://github.com/Overdrive141/Dropp/actions/workflows/maven.yml/badge.svg)](https://github.com/Overdrive141/Dropp/actions/workflows/maven.yml)
 
 ---
