@@ -25,9 +25,5 @@ jobs:
         cache-path: ${{ runner.tool_cache }}/flutter # optional, change this to specify the cache path
     - run: flutter pub get
 #     - run: flutter packages pub run build_runner build
-    - run: flutter test --coverage
-    
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v2
-      
+    - run: flutter test
     
