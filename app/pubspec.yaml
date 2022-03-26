@@ -44,7 +44,21 @@ dependencies:
   hooks_riverpod: ^1.0.3
   background_location: ^0.8.1
   flutter_compass: "^0.7.0"
-  permission_handler: ^9.2.0
+  permission_handler:
+  firebase_storage: ^10.2.9
+  camera: ^0.9.4+16
+  video_player: ^2.3.0
+  image_picker: ^0.8.4+11
+  lottie: ^1.2.2
+  dio: ^4.0.4
+  story_view: ^0.13.2
+
+  #AR
+  cloud_firestore:
+  geoflutterfire: "^3.0.1"
+  path_provider: ^2.0.3
+  flutter_archive: ^4.0.1
+  ar_flutter_plugin: ^0.6.2
 
 dev_dependencies:
   flutter_test:
@@ -56,6 +70,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^1.0.0
+  mocktail: ^0.3.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -71,7 +86,8 @@ flutter:
   assets:
     - assets/images/
     - assets/markers/
-  #   - images/a_dot_ham.jpeg
+    - assets/lottie/
+    - assets/models/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
