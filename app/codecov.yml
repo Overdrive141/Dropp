@@ -1,0 +1,4 @@
+ignore:
+  - "**/example/"
+  - "**/*.g.dart"
+  - "**/*.freezed.dart"
