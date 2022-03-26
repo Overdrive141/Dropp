@@ -56,5 +56,9 @@
 		<string>fetch</string>
 		<string>location</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs access to camera</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs access to microphone</string>
 </dict>
 </plist>
