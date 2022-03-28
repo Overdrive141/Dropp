@@ -9,6 +9,7 @@ class UserService extends ChangeNotifier {
 
   UserService({FirebaseAuth? auth}) {
     _auth = auth ?? FirebaseAuth.instance;
+    _type = AvatarType.values.byName(user!.photoURL ?? AvatarType.male.name);
   }
 
   static final provider = ChangeNotifierProvider((_) => UserService());
@@ -24,21 +25,12 @@ class UserService extends ChangeNotifier {
 
   AvatarType _type = AvatarType.male;
 
-  AvatarType get type {
-    try {
-      if (user != null) {
-        return AvatarType.values.byName(user!.photoURL ?? '');
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-    return _type;
-  }
+  AvatarType get type => _type;
 
   set type(AvatarType type) {
     _type = type;
     if (user != null) {
-      user!.updatePhotoURL(type.name);
+      user!.updatePhotoURL(type.name).catchError((e) => print(e));
     }
     notifyListeners();
   }

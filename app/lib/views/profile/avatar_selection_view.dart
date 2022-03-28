@@ -31,8 +31,6 @@ class _AvatarSelectionViewState extends ConsumerState<AvatarSelectionView> {
   }
 
   void setAvatarType(AvatarType type) {
-    selectedType = type;
-    setState(() {});
     ref.read(UserService.provider).type = type;
   }
 
