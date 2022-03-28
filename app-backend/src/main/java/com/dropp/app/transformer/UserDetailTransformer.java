@@ -14,6 +14,7 @@ public class UserDetailTransformer {
                 .username(userRequest.getUsername())
                 .password(userRequest.getPassword())
                 .contactNo(userRequest.getContactNo())
+                .favDrops(0L)
                 .avatar(userRequest.getAvatar())
                 .build();
     }

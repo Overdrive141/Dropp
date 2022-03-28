@@ -2,6 +2,7 @@ package com.dropp.app.controller;
 
 import com.dropp.app.model.DropRequest;
 import com.dropp.app.model.dto.Drop;
+import com.dropp.app.model.dto.DropCountDTO;
 import com.dropp.app.model.dto.DropDetailDTO;
 import com.dropp.app.service.DropDetailService;
 import com.dropp.app.validation.ValidationService;
@@ -14,6 +15,10 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Set;
 
@@ -67,7 +72,7 @@ public class DropDetailController {
 
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    @GetMapping("/user/{userId}/star")
+    @GetMapping("/user/{userId}/drop/star")
     public Set<DropDetailDTO> getStarredDrops(@PathVariable @NotNull @NotEmpty Long userId, @NotNull @NotEmpty @RequestHeader("Authorization") String authorizationHeader) throws FirebaseAuthException {
         validationService.validate(authorizationHeader);
         return dropDetailService.getStarredDrops(userId);
@@ -89,5 +94,18 @@ public class DropDetailController {
         return dropDetailService.getAllDropsForUser(userId, latitude, longitude, radius);
     }
 
+    @GetMapping("/drop/score/drop")
+    public List<DropCountDTO> getDropCountByUser() {
+        LocalDateTime startDateTime = LocalDateTime.now();
+        LocalDateTime endDateTime = LocalDate.now().atTime(LocalTime.MAX);
+        return dropDetailService.getDropCountByUser(startDateTime.toInstant(ZoneOffset.UTC), endDateTime.toInstant(ZoneOffset.UTC));
+    }
+
+    @GetMapping("/drop/score/explore")
+    public List<DropCountDTO> getExploreCountByUser() {
+        LocalDateTime startDateTime = LocalDateTime.now();
+        LocalDateTime endDateTime = LocalDate.now().atTime(LocalTime.MAX);
+        return dropDetailService.getExploreCountByUser(startDateTime.toInstant(ZoneOffset.UTC), endDateTime.toInstant(ZoneOffset.UTC));
+    }
 
 }
