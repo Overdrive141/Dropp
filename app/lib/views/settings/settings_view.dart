@@ -80,7 +80,10 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
             const SizedBox(height: 8),
             ListTile(
               contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.person),
+              leading: const Icon(
+                Icons.person,
+                color: Colors.blue,
+              ),
               horizontalTitleGap: 0,
               dense: true,
               title: const Text(
@@ -95,7 +98,32 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
             ),
             ListTile(
               contentPadding: EdgeInsets.zero,
-              leading: const Icon(Icons.exit_to_app),
+              leading: const Icon(
+                Icons.favorite_rounded,
+                color: Colors.red,
+              ),
+              horizontalTitleGap: 0,
+              dense: true,
+              title: const Text(
+                'Saved Dropps',
+                style: TextStyle(color: Colors.black, fontSize: 16),
+              ),
+              subtitle: const Text(
+                'All your saved dropps can be viewed here',
+                style: TextStyle(color: Colors.grey),
+              ),
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text('Feature Coming Soon'),
+                ));
+              },
+            ),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(
+                Icons.exit_to_app,
+                color: Colors.blueGrey,
+              ),
               horizontalTitleGap: 0,
               dense: true,
               title: const Text(
