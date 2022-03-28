@@ -13,4 +13,13 @@ abstract class AppAssets {
 
   static get progressAnimation => 'assets/lottie/progress.json';
   static get bubblesAnimation => 'assets/lottie/bubbles.json';
+
+  static List<String> get modelOptions => [
+        'Duck',
+        'Buggy',
+        'RiggedFigure',
+        'Lantern',
+        'CesiumMan',
+        'CesiumMilkTruck'
+      ];
 }
