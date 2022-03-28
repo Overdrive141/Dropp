@@ -9,3 +9,10 @@ enum AvatarType {
   male,
   female,
 }
+
+enum DroppType {
+  photo,
+  video,
+  ar,
+  text,
+}
