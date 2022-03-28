@@ -30,7 +30,7 @@ class UserService extends ChangeNotifier {
   set type(AvatarType type) {
     _type = type;
     if (user != null) {
-      user!.updatePhotoURL(type.name).catchError((e) => print(e));
+      user!.updatePhotoURL(type.name).catchError((e) => debugPrint(e));
     }
     notifyListeners();
   }

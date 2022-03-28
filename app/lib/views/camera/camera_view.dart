@@ -68,7 +68,7 @@ class _CameraViewState extends ConsumerState<CameraView>
     if (f != null) {
       _isUploading = true;
       setState(() {});
-      final url = await ref.read(CloudStorageService.provider).uploadImageToDb(
+      await ref.read(CloudStorageService.provider).uploadImageToDb(
             file: File(f.path),
             title: 'ras',
             progress: _handleUploadProgress,
@@ -83,7 +83,7 @@ class _CameraViewState extends ConsumerState<CameraView>
   _uploadVideo(String filePath) async {
     _isUploading = true;
     setState(() {});
-    final url = await ref.read(CloudStorageService.provider).uploadVideoToDb(
+    await ref.read(CloudStorageService.provider).uploadVideoToDb(
           file: File(filePath),
           title: 'ras',
           progress: _handleUploadProgress,
