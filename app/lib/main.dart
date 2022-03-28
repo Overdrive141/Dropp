@@ -1,18 +1,13 @@
-import 'package:flutter/material.dart';
+import 'package:dropp/views/authentication/authentication_view.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-
-import 'views/authentication/authentication_view.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (defaultTargetPlatform == TargetPlatform.android) {
-    AndroidGoogleMapsFlutter.useAndroidViewSurface = true;
-  }
 
   await Firebase.initializeApp();
+
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -22,6 +17,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Dropp',
       theme: ThemeData(
         primarySwatch: Colors.orange,

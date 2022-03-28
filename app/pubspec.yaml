@@ -52,6 +52,8 @@ dependencies:
   lottie: ^1.2.2
   dio: ^4.0.4
   story_view: ^0.13.2
+  collection:
+  faker: ^2.0.0
 
   #AR
   cloud_firestore:
