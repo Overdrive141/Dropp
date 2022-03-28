@@ -84,7 +84,7 @@ class _ARDroppViewState extends State<ARDroppView> {
   Future<void> loadModels() async {
     Directory appDocDir = await getApplicationDocumentsDirectory();
     String appDocPath = appDocDir.path;
-    options.map((o) => saveToAppDirectory(appDocPath, o));
+    options.forEach((o) => saveToAppDirectory(appDocPath, o));
   }
 
   @override
