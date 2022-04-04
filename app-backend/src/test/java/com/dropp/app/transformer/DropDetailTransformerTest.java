@@ -71,10 +71,10 @@ public class DropDetailTransformerTest {
                 .isActive(true)
                 .build();
         DropDetailDTO actualDropDetailDTO = transformer.map(dropDetail);
-        assertEquals(actualDropDetailDTO.getId(), dropDetail.getId());
-        assertEquals(actualDropDetailDTO.getType(), dropDetail.getType());
-        assertEquals(actualDropDetailDTO.getMessage(), dropDetail.getMessage());
-        assertEquals(actualDropDetailDTO.getLatitude(), BigDecimal.valueOf(dropDetail.getCoordinate().getY()));
-        assertEquals(actualDropDetailDTO.getLongitude(), BigDecimal.valueOf(dropDetail.getCoordinate().getX()));
+        assertEquals(dropDetail.getId(), actualDropDetailDTO.getId());
+        assertEquals(dropDetail.getType(), actualDropDetailDTO.getType());
+        assertEquals(dropDetail.getMessage(), actualDropDetailDTO.getMessage());
+        assertEquals(BigDecimal.valueOf(dropDetail.getCoordinate().getY()), actualDropDetailDTO.getLatitude());
+        assertEquals(BigDecimal.valueOf(dropDetail.getCoordinate().getX()), actualDropDetailDTO.getLongitude());
     }
 }

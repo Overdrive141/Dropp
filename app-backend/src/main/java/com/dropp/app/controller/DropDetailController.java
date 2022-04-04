@@ -6,7 +6,6 @@ import com.dropp.app.model.dto.DropCountDTO;
 import com.dropp.app.model.dto.DropDetailDTO;
 import com.dropp.app.service.DropDetailService;
 import com.dropp.app.validation.ValidationService;
-import com.google.firebase.auth.FirebaseAuthException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +14,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
+import java.time.*;
+import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.WeekFields;
 import java.util.List;
-import java.util.Set;
+import java.util.Locale;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -65,7 +63,7 @@ public class DropDetailController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @PutMapping("/user/{userId}/drop/{dropId}/star")
-    public DropDetailDTO unstarDrop(@PathVariable @NotNull @NotEmpty Long userId, @PathVariable @NotNull @NotEmpty Long dropId, @NotNull @NotEmpty @RequestHeader("Authorization") String authorizationHeader) throws FirebaseAuthException {
+    public DropDetailDTO unstarDrop(@PathVariable @NotNull @NotEmpty Long userId, @PathVariable @NotNull @NotEmpty Long dropId, @NotNull @NotEmpty @RequestHeader("Authorization") String authorizationHeader) {
         validationService.validate(authorizationHeader);
         return dropDetailService.unstarDrop(userId, dropId);
     }
@@ -73,7 +71,7 @@ public class DropDetailController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @GetMapping("/user/{userId}/drop/star")
-    public Set<DropDetailDTO> getStarredDrops(@PathVariable @NotNull @NotEmpty Long userId, @NotNull @NotEmpty @RequestHeader("Authorization") String authorizationHeader) throws FirebaseAuthException {
+    public List<DropDetailDTO> getStarredDrops(@PathVariable @NotNull @NotEmpty Long userId, @NotNull @NotEmpty @RequestHeader("Authorization") String authorizationHeader) {
         validationService.validate(authorizationHeader);
         return dropDetailService.getStarredDrops(userId);
     }
@@ -81,7 +79,7 @@ public class DropDetailController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @PostMapping("/user/{userId}/drop/{dropId}/explore")
-    public DropDetailDTO exploreDrop(@PathVariable @NotNull @NotEmpty Long userId, @PathVariable @NotNull @NotEmpty Long dropId, @NotNull @NotEmpty @RequestHeader("Authorization") String authorizationHeader) throws FirebaseAuthException {
+    public DropDetailDTO exploreDrop(@PathVariable @NotNull @NotEmpty Long userId, @PathVariable @NotNull @NotEmpty Long dropId, @NotNull @NotEmpty @RequestHeader("Authorization") String authorizationHeader) {
         validationService.validate(authorizationHeader);
         return dropDetailService.exploreDrop(userId, dropId);
     }
@@ -89,23 +87,26 @@ public class DropDetailController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @GetMapping("/user/{userId}/drop/all")
-    public Set<Drop> getAllDrops(@PathVariable @NotNull Long userId, @RequestParam("lat") BigDecimal latitude, @RequestParam("lng") BigDecimal longitude, @RequestParam("radius") Long radius, @NotNull @NotEmpty @RequestHeader("Authorization") String authorizationHeader) throws FirebaseAuthException {
+    public List<Drop> getAllDrops(@PathVariable @NotNull Long userId, @RequestParam("lat") BigDecimal latitude, @RequestParam("lng") BigDecimal longitude, @RequestParam("radius") Long radius, @NotNull @NotEmpty @RequestHeader("Authorization") String authorizationHeader) {
         validationService.validate(authorizationHeader);
         return dropDetailService.getAllDropsForUser(userId, latitude, longitude, radius);
     }
 
     @GetMapping("/drop/score/drop")
-    public List<DropCountDTO> getDropCountByUser() {
-        LocalDateTime startDateTime = LocalDateTime.now();
+    public List<DropCountDTO> getDropCountByUser(@NotNull @NotEmpty @RequestHeader("Authorization") String authorizationHeader) {
+        validationService.validate(authorizationHeader);
+        DayOfWeek firstDayOfWeek = WeekFields.of(Locale.CANADA).getFirstDayOfWeek();
+        LocalDateTime startDateTime = LocalDateTime.now().with(TemporalAdjusters.previousOrSame(firstDayOfWeek));
         LocalDateTime endDateTime = LocalDate.now().atTime(LocalTime.MAX);
         return dropDetailService.getDropCountByUser(startDateTime.toInstant(ZoneOffset.UTC), endDateTime.toInstant(ZoneOffset.UTC));
     }
 
     @GetMapping("/drop/score/explore")
-    public List<DropCountDTO> getExploreCountByUser() {
-        LocalDateTime startDateTime = LocalDateTime.now();
+    public List<DropCountDTO> getExploreCountByUser(@NotNull @NotEmpty @RequestHeader("Authorization") String authorizationHeader) {
+        validationService.validate(authorizationHeader);
+        DayOfWeek firstDayOfWeek = WeekFields.of(Locale.CANADA).getFirstDayOfWeek();
+        LocalDateTime startDateTime = LocalDateTime.now().with(TemporalAdjusters.previousOrSame(firstDayOfWeek));
         LocalDateTime endDateTime = LocalDate.now().atTime(LocalTime.MAX);
         return dropDetailService.getExploreCountByUser(startDateTime.toInstant(ZoneOffset.UTC), endDateTime.toInstant(ZoneOffset.UTC));
     }
-
 }
