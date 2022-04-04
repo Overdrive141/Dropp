@@ -23,7 +23,6 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -82,13 +81,13 @@ public class DropDetailService {
         return dropDetailTransformer.map(dropDetail);
     }
 
-    public Set<DropDetailDTO> getStarredDrops(Long userId) {
+    public List<DropDetailDTO> getStarredDrops(Long userId) {
         UserDetail userDetail = userDetailRepository.findById(userId).orElseThrow(() -> throwUserNotFoundException(userId));
         List<StarredDrop> starredDrops = starredDropRepository.findByUserDetailAndIsActive(userDetail, true);
         return starredDrops.stream()
                 .map(starredDrop -> starredDrop.getDropDetail())
                 .map(dropDetail -> dropDetailTransformer.map(dropDetail))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
     public DropDetailDTO exploreDrop(Long userId, Long dropId) {
@@ -110,7 +109,7 @@ public class DropDetailService {
                 .build();
     }
 
-    public Set<Drop> getAllDropsForUser(Long userId, BigDecimal latitude, BigDecimal longitude, Long radius) {
+    public List<Drop> getAllDropsForUser(Long userId, BigDecimal latitude, BigDecimal longitude, Long radius) {
         UserDetail userDetail = userDetailRepository.findById(userId).orElseThrow(() -> throwUserNotFoundException(userId));
         Point point = geometryFactory.createPoint(new Coordinate(longitude.doubleValue(), latitude.doubleValue()));
         List<DropDetail> dropDetails = dropDetailRepository.findAllDrops(point, radius);
@@ -122,7 +121,7 @@ public class DropDetailService {
                             .isSeen(exploredDrop.isPresent() && exploredDrop.get().isSeen())
                             .build();
                 })
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
     public List<DropCountDTO> getDropCountByUser(Instant startDate, Instant endDate) {

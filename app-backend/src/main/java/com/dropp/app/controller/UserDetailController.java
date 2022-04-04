@@ -4,7 +4,6 @@ import com.dropp.app.model.UserRequest;
 import com.dropp.app.model.dto.UserDetailDTO;
 import com.dropp.app.service.UserDetailService;
 import com.dropp.app.validation.ValidationService;
-import com.google.firebase.auth.FirebaseAuthException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +24,7 @@ public class UserDetailController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @GetMapping("/user/{emailOrUsername}")
-    public UserDetailDTO getUserByEmailIdOrUsername(@PathVariable("emailOrUsername") String emailOrUsername, @NotNull @NotEmpty @RequestHeader("Authorization") String authorizationHeader) throws FirebaseAuthException {
+    public UserDetailDTO getUserByEmailIdOrUsername(@PathVariable("emailOrUsername") String emailOrUsername, @NotNull @NotEmpty @RequestHeader("Authorization") String authorizationHeader) {
         validationService.validate(authorizationHeader);
         return userDetailService.getUserByEmailOrUsername(emailOrUsername);
     }
@@ -33,7 +32,7 @@ public class UserDetailController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @PostMapping("/user")
-    public UserDetailDTO addUser(@Valid @RequestBody UserRequest userRequest, @NotNull @NotEmpty @RequestHeader("Authorization") String authorizationHeader) throws FirebaseAuthException {
+    public UserDetailDTO addUser(@Valid @RequestBody UserRequest userRequest, @NotNull @NotEmpty @RequestHeader("Authorization") String authorizationHeader) {
         validationService.validate(authorizationHeader);
         return userDetailService.addUser(userRequest);
     }
