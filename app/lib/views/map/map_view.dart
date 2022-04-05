@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -6,10 +5,10 @@ import 'package:background_location/background_location.dart';
 import 'package:dropp/assets.dart';
 import 'package:dropp/models/dropp.dart';
 import 'package:dropp/models/enums.dart';
+import 'package:dropp/services/api_service.dart';
 import 'package:dropp/services/location_service.dart';
 import 'package:dropp/services/user_service.dart';
 import 'package:dropp/views/ar/ar_dropp_view.dart';
-import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -17,7 +16,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../services/compass_service.dart';
 import '../../services/permission_service.dart';
-import '../dropp_view/story_view.dart';
+import '../dropp_view/dropp_story_view.dart';
+import 'map_style.dart';
 
 class MapView extends ConsumerStatefulWidget {
   final bool enableLocationPicker;
@@ -58,25 +58,24 @@ class MapViewState extends ConsumerState<MapView> {
     position: _kdefaultCenter,
   );
 
-  late final List<Dropp> dropps = List.generate(20, (m) {
-    final type = (DroppType.values.toList()..shuffle()).first;
-    return Dropp(
-      type: type,
-      content: getContent(type),
-      id: Faker().guid.guid(),
-      lat: _kdefaultCenter.latitude - (Random().nextDouble() / 100),
-      lng: _kdefaultCenter.longitude - (Random().nextDouble() / 100),
-      time: DateTime.now(),
-    );
-  });
+  List<Dropp> dropps = [];
 
   void showContent(Dropp dropp) async {
+    // final distance = ref
+    //     .read(LocationService.provider.originProvider)
+    //     .getDistanceFromCurrentLocation(dropp.lat, dropp.lng);
+    // if (distance == null || distance > 100) {
+    //   ScaffoldMessenger.of(context).clearSnackBars();
+    //   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+    //     content: Text('Please move closer to the dropp'),
+    //   ));
+    // }
     if (dropp.type == DroppType.ar) {
       await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (_) => ARDroppView(
-            model: dropp.content,
+            dropp: dropp,
           ),
         ),
       );
@@ -84,14 +83,14 @@ class MapViewState extends ConsumerState<MapView> {
       await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (_) => MoreStories(
+          builder: (_) => DroppStoryView(
             dropp: dropp,
           ),
         ),
       );
     }
-    dropp.isSeen = true;
-    _loadDropMarkers();
+    dropp = dropp.copyWith(isSeen: true);
+    setState(() {});
   }
 
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
@@ -106,11 +105,11 @@ class MapViewState extends ConsumerState<MapView> {
         .asUint8List();
   }
 
-  Set<Marker> markers = {};
-
   @override
   initState() {
     _loadMarker();
+    _loadDropMarkers();
+
     super.initState();
   }
 
@@ -120,38 +119,28 @@ class MapViewState extends ConsumerState<MapView> {
     super.dispose();
   }
 
-  void _onMapCreated(GoogleMapController controller) async {
-    _mapController = controller;
-    _mapController?.setMapStyle(_mapStyle);
-  }
+  Uint8List? droppMarkerBytes;
 
-  String getContent(DroppType type) {
-    switch (type) {
-      case DroppType.photo:
-        return Faker().image.image(random: true, width: 400);
-      case DroppType.video:
-        return "https://file-examples.com/storage/fe07f859fd624073f9dbdc6/2017/04/file_example_MP4_480_1_5MG.mp4";
-      case DroppType.text:
-        return Faker().lorem.sentence();
-      case DroppType.ar:
-        return (AppAssets.modelOptions.toList()..shuffle()).first;
+  Set<Marker> get markers {
+    if (droppMarkerBytes != null) {
+      return dropps
+          .map(
+            (m) => Marker(
+              onTap: () => showContent(m),
+              icon: BitmapDescriptor.fromBytes(droppMarkerBytes!),
+              markerId: MarkerId(m.id),
+              position: LatLng(m.lat, m.lng),
+              alpha: m.isSeen ? 0.3 : 1,
+            ),
+          )
+          .toSet();
     }
+    return {};
   }
 
   Future _loadDropMarkers() async {
-    final bytes = await getBytesFromAsset(AppAssets.dropMarker, 200);
-    markers = dropps
-        .map(
-          (m) => Marker(
-            onTap: () => showContent(m),
-            icon: BitmapDescriptor.fromBytes(bytes),
-            markerId: MarkerId(m.id),
-            position: LatLng(m.lat, m.lng),
-            alpha: m.isSeen ? 0.3 : 1,
-          ),
-        )
-        .toSet();
-
+    droppMarkerBytes = await getBytesFromAsset(AppAssets.dropMarker, 200);
+    dropps = await ref.read(ApiService.provider).getAllDropps();
     setState(() {});
   }
 
@@ -159,7 +148,6 @@ class MapViewState extends ConsumerState<MapView> {
     final image = ref.read(UserService.provider).avatarMarker;
     final bytes = await getBytesFromAsset(image, 150);
     avatar = avatar.copyWith(iconParam: BitmapDescriptor.fromBytes(bytes));
-    await _loadDropMarkers();
     setState(() {});
   }
 
@@ -202,6 +190,11 @@ class MapViewState extends ConsumerState<MapView> {
     _loadMarker();
   }
 
+  void _onMapCreated(GoogleMapController controller) async {
+    _mapController = controller;
+    _mapController?.setMapStyle(mapStyle);
+  }
+
   @override
   Widget build(BuildContext context) {
     final isLocationEnabled = ref.watch(PermissionService.provider);
@@ -232,105 +225,3 @@ class MapViewState extends ConsumerState<MapView> {
     );
   }
 }
-
-const String _mapStyle = '''[
-    {
-        "featureType": "all",
-        "elementType": "all",
-        "stylers": [
-            {
-                "saturation": "32"
-            },
-            {
-                "lightness": "-3"
-            },
-            {
-                "visibility": "on"
-            },
-            {
-                "weight": "1.18"
-            }
-        ]
-    },
-    {
-        "featureType": "administrative",
-        "elementType": "labels",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "landscape",
-        "elementType": "labels",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "landscape.man_made",
-        "elementType": "all",
-        "stylers": [
-            {
-                "saturation": "-70"
-            },
-            {
-                "lightness": "14"
-            }
-        ]
-    },
-    {
-        "featureType": "poi",
-        "elementType": "labels",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "road",
-        "elementType": "labels",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "transit",
-        "elementType": "labels",
-        "stylers": [
-            {
-                "visibility": "off"
-            }
-        ]
-    },
-    {
-        "featureType": "water",
-        "elementType": "all",
-        "stylers": [
-            {
-                "saturation": "100"
-            },
-            {
-                "lightness": "-14"
-            }
-        ]
-    },
-    {
-        "featureType": "water",
-        "elementType": "labels",
-        "stylers": [
-            {
-                "visibility": "off"
-            },
-            {
-                "lightness": "12"
-            }
-        ]
-    }
-]''';

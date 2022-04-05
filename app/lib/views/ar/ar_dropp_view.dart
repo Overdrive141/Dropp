@@ -14,19 +14,25 @@ import 'package:ar_flutter_plugin/models/ar_node.dart';
 import 'package:collection/collection.dart';
 import 'package:dropp/assets.dart';
 import 'package:dropp/colors.dart';
+import 'package:dropp/models/enums.dart';
+import 'package:dropp/widgets/save_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:vector_math/vector_math_64.dart' hide Colors;
 
+import '../../models/dropp.dart';
+
 class ARDroppView extends StatefulWidget {
   const ARDroppView({
     Key? key,
     this.onDone,
-    this.model,
+    this.dropp,
+    this.showSaveButton = true,
   }) : super(key: key);
   final VoidCallback? onDone;
-  final String? model;
+  final Dropp? dropp;
+  final bool showSaveButton;
 
   @override
   _ARDroppViewState createState() => _ARDroppViewState();
@@ -37,7 +43,8 @@ class _ARDroppViewState extends State<ARDroppView> {
   late ARObjectManager arObjectManager;
   late ARAnchorManager arAnchorManager;
 
-  bool get isPreview => widget.model != null;
+  Dropp? get dropp => widget.dropp;
+  bool get isPreview => dropp != null && dropp!.type == DroppType.ar;
 
   List<ARNode> nodes = [];
   List<ARAnchor> anchors = [];
@@ -52,7 +59,7 @@ class _ARDroppViewState extends State<ARDroppView> {
   }
 
   List<String> get options =>
-      isPreview ? [widget.model!] : AppAssets.modelOptions;
+      isPreview ? [dropp!.content] : AppAssets.modelOptions;
 
   late List<ARNode> models = options
       .map((i) => ARNode(
@@ -100,7 +107,10 @@ class _ARDroppViewState extends State<ARDroppView> {
         ),
         iconTheme: const IconThemeData(color: Colors.white),
         actions: isPreview
-            ? null
+            ? [
+                if (widget.showSaveButton) SaveButton(dropp: widget.dropp!),
+                const SizedBox(width: 16),
+              ]
             : [
                 if (nodes.isNotEmpty)
                   GestureDetector(

@@ -1,6 +1,12 @@
+import 'package:faker/faker.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class TextEditor extends StatelessWidget {
+import '../models/dropp.dart';
+import '../models/enums.dart';
+import '../services/local_storage.dart';
+
+class TextEditor extends ConsumerWidget {
   TextEditor({
     Key? key,
     this.onDone,
@@ -10,7 +16,7 @@ class TextEditor extends StatelessWidget {
   late final TextEditingController _controller = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -19,7 +25,17 @@ class TextEditor extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.check),
-            onPressed: () {
+            onPressed: () async {
+              await ref.read(LocalStorageService.provider).addDropp(
+                    Dropp(
+                      content: _controller.text,
+                      id: Faker().guid.guid(),
+                      lat: 42.74921841,
+                      lng: -83.079421412,
+                      time: DateTime.now(),
+                      type: DroppType.text,
+                    ),
+                  );
               onDone?.call(_controller.text);
             },
           )

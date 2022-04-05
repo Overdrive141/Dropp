@@ -1,6 +1,7 @@
 import 'package:dropp/colors.dart';
 
 import 'package:dropp/services/permission_service.dart';
+import 'package:dropp/views/settings/leaderboard_view.dart';
 import 'package:dropp/views/settings/settings_view.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/material.dart';
@@ -30,9 +31,12 @@ class HomeView extends ConsumerWidget {
               icon: const Icon(Icons.emoji_events_outlined),
               color: Colors.white,
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text('Feature Coming Soon'),
-                ));
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const LeaderboardView(),
+                  ),
+                );
               },
             ),
           ),

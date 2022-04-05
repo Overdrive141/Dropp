@@ -1,22 +1,26 @@
 import 'package:dropp/models/enums.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:story_view/story_view.dart';
 
 import '../../models/dropp.dart';
+import '../../widgets/save_button.dart';
 
-class MoreStories extends StatefulWidget {
-  const MoreStories({
+class DroppStoryView extends ConsumerStatefulWidget {
+  const DroppStoryView({
     Key? key,
     required this.dropp,
+    this.showSaveButton = true,
   }) : super(key: key);
 
   final Dropp dropp;
+  final bool showSaveButton;
 
   @override
-  _MoreStoriesState createState() => _MoreStoriesState();
+  _DroppStoryViewState createState() => _DroppStoryViewState();
 }
 
-class _MoreStoriesState extends State<MoreStories> {
+class _DroppStoryViewState extends ConsumerState<DroppStoryView> {
   final storyController = StoryController();
 
   @override
@@ -35,10 +39,7 @@ class _MoreStoriesState extends State<MoreStories> {
         automaticallyImplyLeading: true,
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
-          GestureDetector(
-            child: const Icon(Icons.favorite_border),
-            onTap: () {},
-          ),
+          if (widget.showSaveButton) SaveButton(dropp: widget.dropp),
           const SizedBox(width: 16),
         ],
       ),

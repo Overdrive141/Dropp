@@ -1,4 +1,7 @@
+import 'package:dropp/services/api_service.dart';
+import 'package:dropp/services/user_service.dart';
 import 'package:dropp/views/authentication/authentication_view.dart';
+import 'package:dropp/views/home/home_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -8,21 +11,25 @@ Future<void> main() async {
 
   await Firebase.initializeApp();
 
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(ProviderScope(
+    overrides: [ApiService.provider.overrideWithValue(FakeApi())],
+    child: const MyApp(),
+  ));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isLoggedIn = ref.watch(UserService.provider).hasUser;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Dropp',
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
-      home: const AuthenticationView(),
+      home: (isLoggedIn ? const HomeView() : const AuthenticationView()),
     );
   }
 }

@@ -2,6 +2,8 @@ import 'package:dropp/colors.dart';
 import 'package:dropp/services/user_service.dart';
 import 'package:dropp/views/authentication/authentication_view.dart';
 import 'package:dropp/views/profile/avatar_selection_view.dart';
+import 'package:dropp/views/settings/my_dropps_view.dart';
+import 'package:dropp/views/settings/saved_dropps_view.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -13,17 +15,27 @@ class SettingsView extends ConsumerStatefulWidget {
 }
 
 class _SettingsViewState extends ConsumerState<SettingsView> {
-  void showAvatarView(BuildContext context) {
+  void push(BuildContext context, Widget widget) {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => AvatarSelectionView(
-          onDone: () {
-            Navigator.pop(context);
-          },
-        ),
-      ),
+      MaterialPageRoute(builder: (_) => widget),
     );
+  }
+
+  void showAvatarView(BuildContext context) {
+    push(context, AvatarSelectionView(
+      onDone: () {
+        Navigator.pop(context);
+      },
+    ));
+  }
+
+  void showSavedDroppsView(BuildContext context) {
+    push(context, const SavedDroppsView());
+  }
+
+  void showMyDropps(BuildContext context) {
+    push(context, const MyDroppsView());
   }
 
   Future logout() async {
@@ -100,7 +112,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
               contentPadding: EdgeInsets.zero,
               leading: const Icon(
                 Icons.favorite_rounded,
-                color: Colors.red,
+                color: Colors.pink,
               ),
               horizontalTitleGap: 0,
               dense: true,
@@ -112,12 +124,25 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                 'All your saved dropps can be viewed here',
                 style: TextStyle(color: Colors.grey),
               ),
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text('Feature Coming Soon'),
-                ));
-              },
+              onTap: () => showSavedDroppsView(context),
             ),
+            ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Icon(
+                  Icons.location_on_rounded,
+                  color: AppColors.primary,
+                ),
+                horizontalTitleGap: 0,
+                dense: true,
+                title: const Text(
+                  'My Dropps',
+                  style: TextStyle(color: Colors.black, fontSize: 16),
+                ),
+                subtitle: const Text(
+                  'All your previous dropps can be viewed here',
+                  style: TextStyle(color: Colors.grey),
+                ),
+                onTap: () => showMyDropps(context)),
             ListTile(
               contentPadding: EdgeInsets.zero,
               leading: const Icon(
