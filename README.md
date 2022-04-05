@@ -1,7 +1,7 @@
 # Dropp
 [![Flutter Test](https://github.com/Overdrive141/Dropp/actions/workflows/flutter.yml/badge.svg)](https://github.com/Overdrive141/Dropp/actions/workflows/flutter.yml)
 [![Java CI with Maven](https://github.com/Overdrive141/Dropp/actions/workflows/maven.yml/badge.svg)](https://github.com/Overdrive141/Dropp/actions/workflows/maven.yml)
-
+[![codecov](https://codecov.io/gh/Overdrive141/Dropp/branch/main/graph/badge.svg?token=PV5W1ZTIAP)](https://codecov.io/gh/Overdrive141/Dropp)
 ---
 ## Requirements
 The following requirements must be installed in your environment before continuing:
