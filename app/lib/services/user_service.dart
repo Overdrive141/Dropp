@@ -9,7 +9,7 @@ class UserService extends ChangeNotifier {
 
   UserService({FirebaseAuth? auth}) {
     _auth = auth ?? FirebaseAuth.instance;
-    _type = AvatarType.values.byName(user!.photoURL ?? AvatarType.male.name);
+    _type = AvatarType.values.byName(user?.photoURL ?? AvatarType.male.name);
   }
 
   static final provider = ChangeNotifierProvider((_) => UserService());
