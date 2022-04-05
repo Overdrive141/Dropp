@@ -13,8 +13,10 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>app-backend</name>
     <description>Initial setup for Dropp Project.</description>
+    <packaging>jar</packaging>
     <properties>
         <java.version>11</java.version>
+        <jacoco.plugin.version>0.8.6</jacoco.plugin.version>
     </properties>
     <dependencies>
         <dependency>
@@ -83,6 +85,36 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.plugin.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>com/dropp/app/model/**/*</exclude>
+                        <exclude>com/dropp/app/exception/**/*</exclude>
+                        <exclude>com/dropp/app/repository/**/*</exclude>
+                        <exclude>com/dropp/app/config/**/*</exclude>
+                        <exclude>com/dropp/app/validation/**/*</exclude>
+                        <exclude>com/dropp/app/common/**/*</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
