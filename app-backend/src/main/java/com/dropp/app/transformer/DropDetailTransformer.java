@@ -16,6 +16,13 @@ public class DropDetailTransformer {
 
     private final GeometryFactory geometryFactory;
 
+    /**
+     * This method transforms DropRequest object into DropDetail object.
+     *
+     * @param dropRequest Drop Request
+     * @return Drop Detail
+     */
+
     public DropDetail map(DropRequest dropRequest) {
         return DropDetail.builder()
                 .type(dropRequest.getType())
@@ -24,6 +31,13 @@ public class DropDetailTransformer {
                 .coordinate(geometryFactory.createPoint(new Coordinate(dropRequest.getLongitude().doubleValue(), dropRequest.getLatitude().doubleValue())))
                 .build();
     }
+
+    /**
+     * This method transforms DropDetail object into DropDetailDTO object.
+     *
+     * @param dropDetail DropDetail object
+     * @return DropDetailDTO object
+     */
 
     public DropDetailDTO map(DropDetail dropDetail) {
         return DropDetailDTO.builder()
