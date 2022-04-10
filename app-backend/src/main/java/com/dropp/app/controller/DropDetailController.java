@@ -8,6 +8,7 @@ import com.dropp.app.model.dto.DropDetailDTO;
 import com.dropp.app.service.DropDetailService;
 import com.dropp.app.validation.ValidationService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -69,7 +70,7 @@ public class DropDetailController {
     @Operation(summary = "Get all drops of a user",
             description = "Get all drops of a user",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "List of Drop Details", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = List.class))}),
+                    @ApiResponse(responseCode = "200", description = "List of Drop Details", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = DropDetailDTO.class)))}),
                     @ApiResponse(responseCode = "400", description = "Bad Request", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))}),
                     @ApiResponse(responseCode = "404", description = "Not Found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))}),
                     @ApiResponse(responseCode = "401", description = "Unauthorized", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))})
@@ -117,7 +118,7 @@ public class DropDetailController {
     @Operation(summary = "Get all the starred drops by a user",
             description = "Get all the starred drops by a user",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "List of Drop Details", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = List.class))}),
+                    @ApiResponse(responseCode = "200", description = "List of Drop Details", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = DropDetailDTO.class)))}),
                     @ApiResponse(responseCode = "400", description = "Bad Request", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))}),
                     @ApiResponse(responseCode = "404", description = "Not Found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))}),
                     @ApiResponse(responseCode = "401", description = "Unauthorized", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))})
@@ -149,7 +150,7 @@ public class DropDetailController {
     @Operation(summary = "Get new drops for a user",
             description = "Get new drops for a user",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "List of Drops", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = List.class))}),
+                    @ApiResponse(responseCode = "200", description = "List of Drops", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = Drop.class)))}),
                     @ApiResponse(responseCode = "400", description = "Bad Request", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))}),
                     @ApiResponse(responseCode = "404", description = "Not Found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))}),
                     @ApiResponse(responseCode = "401", description = "Unauthorized", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))})
@@ -165,11 +166,12 @@ public class DropDetailController {
     @Operation(summary = "Get Drop Count for leaderboard",
             description = "Get Drop Count for leader board",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "List of Drop Count", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = List.class))}),
+                    @ApiResponse(responseCode = "200", description = "List of Drop Count", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = DropCountDTO.class)))}),
                     @ApiResponse(responseCode = "400", description = "Bad Request", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))}),
                     @ApiResponse(responseCode = "404", description = "Not Found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))}),
                     @ApiResponse(responseCode = "401", description = "Unauthorized", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))})
-            })
+            }
+    )
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     @GetMapping("/drop/score/drop")
@@ -184,7 +186,7 @@ public class DropDetailController {
     @Operation(summary = "Get Explore Count for leaderboard",
             description = "Get Explore Count for leaderboard",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "List of Explore Count", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = List.class))}),
+                    @ApiResponse(responseCode = "200", description = "List of Explore Count", content = {@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = DropCountDTO.class)))}),
                     @ApiResponse(responseCode = "400", description = "Bad Request", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))}),
                     @ApiResponse(responseCode = "404", description = "Not Found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))}),
                     @ApiResponse(responseCode = "401", description = "Unauthorized", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Error.class))})

@@ -157,7 +157,9 @@ paths:
           content:
             application/json:
               schema:
-                type: string
+                type: array
+                items:
+                  $ref: '#/components/schemas/DropDetailDTO'
         '400':
           description: Bad Request
           content:
@@ -369,7 +371,9 @@ paths:
           content:
             application/json:
               schema:
-                type: string
+                type: array
+                items:
+                  $ref: '#/components/schemas/DropDetailDTO'
         '400':
           description: Bad Request
           content:
@@ -423,7 +427,9 @@ paths:
           content:
             application/json:
               schema:
-                type: string
+                type: array
+                items:
+                  $ref: '#/components/schemas/Drop'
         '400':
           description: Bad Request
           content:
@@ -461,7 +467,9 @@ paths:
           content:
             application/json:
               schema:
-                type: string
+                type: array
+                items:
+                  $ref: '#/components/schemas/DropCountDTO'
         '400':
           description: Bad Request
           content:
@@ -499,7 +507,9 @@ paths:
           content:
             application/json:
               schema:
-                type: string
+                type: array
+                items:
+                  $ref: '#/components/schemas/DropCountDTO'
         '400':
           description: Bad Request
           content:
@@ -628,3 +638,18 @@ components:
           type: number
         longitude:
           type: number
+    Drop:
+      type: object
+      properties:
+        dropDetail:
+          $ref: '#/components/schemas/DropDetailDTO'
+        seen:
+          type: boolean
+    DropCountDTO:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/UserDetailDTO'
+        count:
+          type: integer
+          format: int64
