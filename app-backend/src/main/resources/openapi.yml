@@ -1,0 +1,630 @@
+openapi: 3.0.1
+info:
+  title: Dropp
+  description: APIs for the adding an new user, adding a drop, starring a drop etc.
+  version: '1.0'
+servers:
+  - url: http://localhost:8098
+    description: Generated server url
+paths:
+  /api/v1/user/drop/{dropId}/star:
+    put:
+      tags:
+        - drop-detail-controller
+      summary: Unstar a drop
+      description: Unstar a drop
+      operationId: unstarDrop
+      parameters:
+        - name: dropId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Drop Details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DropDetailDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - drop-detail-controller
+      summary: Star a drop
+      description: Star a drop
+      operationId: starDrop
+      parameters:
+        - name: dropId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Drop Details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DropDetailDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/user:
+    post:
+      tags:
+        - user-detail-controller
+      summary: Add new user
+      description: Add new user
+      operationId: addUser
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+        required: true
+      responses:
+        '200':
+          description: User Details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetailDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/user/drop:
+    get:
+      tags:
+        - drop-detail-controller
+      summary: Get all drops of a user
+      description: Get all drops of a user
+      operationId: getDropsForUser
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of Drop Details
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      tags:
+        - drop-detail-controller
+      summary: Add new drop
+      description: Add new drop
+      operationId: addDropForUser
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DropRequest'
+        required: true
+      responses:
+        '200':
+          description: Drop Details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DropDetailDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/user/drop/{dropId}/explore:
+    post:
+      tags:
+        - drop-detail-controller
+      summary: Explore a Drop
+      description: Explore a drop
+      operationId: exploreDrop
+      parameters:
+        - name: dropId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Drop Details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DropDetailDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/user/{emailOrUsername}:
+    get:
+      tags:
+        - user-detail-controller
+      summary: Get User Details from Email or Username
+      description: Get User Details from Email or Username
+      operationId: getUserByEmailIdOrUsername
+      parameters:
+        - name: emailOrUsername
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: User Details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetailDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/user/drop/{id}:
+    get:
+      tags:
+        - drop-detail-controller
+      summary: Get drop
+      description: Get drop
+      operationId: getDrop
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Drop Details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DropDetailDTO'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/user/drop/star:
+    get:
+      tags:
+        - drop-detail-controller
+      summary: Get all the starred drops by a user
+      description: Get all the starred drops by a user
+      operationId: getStarredDrops
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of Drop Details
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/user/drop/all:
+    get:
+      tags:
+        - drop-detail-controller
+      summary: Get new drops for a user
+      description: Get new drops for a user
+      operationId: getAllDrops
+      parameters:
+        - name: lat
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: lng
+          in: query
+          required: true
+          schema:
+            type: number
+        - name: radius
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of Drops
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/drop/score/explore:
+    get:
+      tags:
+        - drop-detail-controller
+      summary: Get Explore Count for leaderboard
+      description: Get Explore Count for leaderboard
+      operationId: getExploreCountByUser
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of Explore Count
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /api/v1/drop/score/drop:
+    get:
+      tags:
+        - drop-detail-controller
+      summary: Get Drop Count for leaderboard
+      description: Get Drop Count for leader board
+      operationId: getDropCountByUser
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: List of Drop Count
+          content:
+            application/json:
+              schema:
+                type: string
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        errorCode:
+          type: integer
+          format: int32
+        message:
+          type: string
+        description:
+          type: string
+    DropDetailDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        userId:
+          type: integer
+          format: int64
+        type:
+          type: string
+          enum:
+            - IMAGE
+            - VIDEO
+            - TEXT
+        message:
+          type: string
+        url:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    UserRequest:
+      required:
+        - avatar
+        - email
+        - username
+      type: object
+      properties:
+        username:
+          maxLength: 20
+          minLength: 1
+          type: string
+        password:
+          maxLength: 30
+          minLength: 8
+          type: string
+        email:
+          type: string
+        contactNo:
+          maxLength: 10
+          minLength: 10
+          type: string
+        avatar:
+          type: string
+          enum:
+            - AV1
+            - AV2
+    UserDetailDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        email:
+          type: string
+        contactNo:
+          type: string
+        favDrops:
+          type: integer
+          format: int64
+        avatar:
+          type: string
+          enum:
+            - AV1
+            - AV2
+    DropRequest:
+      required:
+        - type
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - IMAGE
+            - VIDEO
+            - TEXT
+        message:
+          maxLength: 1000
+          minLength: 0
+          type: string
+        url:
+          maxLength: 1000
+          minLength: 0
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number

@@ -37,11 +37,26 @@ public class DropDetailService {
     private final UserDetailTransformer userDetailTransformer;
     private final GeometryFactory geometryFactory;
 
+    /**
+     * This method is responsible to find drop for the given user id and drop id.
+     *
+     * @param userId user id
+     * @param id     drop id
+     * @return drop details for the given drop id
+     */
+
     public DropDetailDTO getDrop(Long userId, Long id) {
         UserDetail userDetail = userDetailRepository.findById(userId).orElseThrow(() -> throwUserNotFoundException(userId));
         DropDetail dropDetail = dropDetailRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Drop not found with id:" + id));
         return dropDetailTransformer.map(dropDetail);
     }
+
+    /**
+     * This method is responsible for getting all the drops of a particular user.
+     *
+     * @param userId user id
+     * @return List of all the drops of the given user id
+     */
 
     public List<DropDetailDTO> getDropsForUser(Long userId) {
         UserDetail userDetail = userDetailRepository.findById(userId).orElseThrow(() -> throwUserNotFoundException(userId));
@@ -51,6 +66,14 @@ public class DropDetailService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * This method is responsible for adding a new drop for a user id.
+     *
+     * @param userId      user id
+     * @param dropRequest drop request details
+     * @return Drop Details for the newly added drop
+     */
+
     public DropDetailDTO addDrop(Long userId, DropRequest dropRequest) {
         UserDetail userDetail = userDetailRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found with id:" + userId));
         DropDetail dropDetail = dropDetailTransformer.map(dropRequest);
@@ -58,6 +81,14 @@ public class DropDetailService {
         dropDetail.setActive(true);
         return dropDetailTransformer.map(dropDetailRepository.save(dropDetail));
     }
+
+    /**
+     * This method is responsible for starring a drop.
+     *
+     * @param userId user id
+     * @param dropId drop id
+     * @return Drop Details for the starred drop
+     */
 
     public DropDetailDTO starDrop(Long userId, Long dropId) {
         UserDetail userDetail = userDetailRepository.findById(userId).orElseThrow(() -> throwUserNotFoundException(userId));
@@ -70,6 +101,14 @@ public class DropDetailService {
         return dropDetailTransformer.map(dropDetail);
     }
 
+    /**
+     * This method is responsible for un-starring a drop.
+     *
+     * @param userId user id
+     * @param dropId drop id
+     * @return Drop Details of the un-starred drop
+     */
+
     public DropDetailDTO unstarDrop(Long userId, Long dropId) {
         UserDetail userDetail = userDetailRepository.findById(userId).orElseThrow(() -> throwUserNotFoundException(userId));
         DropDetail dropDetail = dropDetailRepository.findById(dropId).orElseThrow(() -> throwResourceNotFoundException(dropId));
@@ -81,6 +120,13 @@ public class DropDetailService {
         return dropDetailTransformer.map(dropDetail);
     }
 
+    /**
+     * This method is responsible for getting all the starred drops of a particular user id.
+     *
+     * @param userId user id
+     * @return List of all the starred drop details
+     */
+
     public List<DropDetailDTO> getStarredDrops(Long userId) {
         UserDetail userDetail = userDetailRepository.findById(userId).orElseThrow(() -> throwUserNotFoundException(userId));
         List<StarredDrop> starredDrops = starredDropRepository.findByUserDetailAndIsActive(userDetail, true);
@@ -89,6 +135,14 @@ public class DropDetailService {
                 .map(dropDetail -> dropDetailTransformer.map(dropDetail))
                 .collect(Collectors.toList());
     }
+
+    /**
+     * This method is responsible for marking a drop explored for a user id.
+     *
+     * @param userId user id
+     * @param dropId drop id
+     * @return Drop Details of the explored drop
+     */
 
     public DropDetailDTO exploreDrop(Long userId, Long dropId) {
         UserDetail userDetail = userDetailRepository.findById(userId).orElseThrow(() -> throwUserNotFoundException(userId));
@@ -102,12 +156,31 @@ public class DropDetailService {
         return dropDetailTransformer.map(dropDetail);
     }
 
+    /**
+     * This method is responsible for creating a starred drop object.
+     *
+     * @param userDetail user details
+     * @param dropDetail drop details
+     * @return starred drop
+     */
+
     private StarredDrop getStarredDrop(UserDetail userDetail, DropDetail dropDetail) {
         return StarredDrop.builder()
                 .userDetail(userDetail)
                 .dropDetail(dropDetail)
                 .build();
     }
+
+    /**
+     * This method is responsible for getting all new drops which are under @param{radius} metres from @param{latitude}
+     * and @param{longitude}.
+     *
+     * @param userId    user id
+     * @param latitude  latitude in decimals
+     * @param longitude longitude in decimals
+     * @param radius    radius in metres
+     * @return List of all the Drops
+     */
 
     public List<Drop> getAllDropsForUser(Long userId, BigDecimal latitude, BigDecimal longitude, Long radius) {
         UserDetail userDetail = userDetailRepository.findById(userId).orElseThrow(() -> throwUserNotFoundException(userId));
@@ -124,6 +197,14 @@ public class DropDetailService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * This method is responsible for getting the count of all the drops by a user id.
+     *
+     * @param startDate start date from the which the drops need to be counted
+     * @param endDate   end date until which the drops need to be counted
+     * @return List of all the users with their drop counts for the specified period
+     */
+
     public List<DropCountDTO> getDropCountByUser(Instant startDate, Instant endDate) {
         List<DropCount> dropCounts = dropDetailRepository.findDropCountByUser(startDate, endDate);
         return dropCounts.stream()
@@ -135,6 +216,14 @@ public class DropDetailService {
                 })
                 .collect(Collectors.toList());
     }
+
+    /**
+     * This method is responsible for getting the count of all the drops explored by a user id.
+     *
+     * @param startDate start date from the which the drops need to be counted
+     * @param endDate   end date until which the drops need to be counted
+     * @return List of all the users with their explored drop counts for the specified period
+     */
 
     public List<DropCountDTO> getExploreCountByUser(Instant startDate, Instant endDate) {
         List<DropCount> exploreCounts = exploredDropRepository.findExploreCountByUser(startDate, endDate);
@@ -148,9 +237,23 @@ public class DropDetailService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * This method is responsible for creating a UserNotFoundException for a user id.
+     *
+     * @param userId user id
+     * @return UserNotFoundException object
+     */
+
     private UserNotFoundException throwUserNotFoundException(Long userId) {
         return new UserNotFoundException("User Not found with user id: " + userId);
     }
+
+    /**
+     * This method is responsible for creating a ResourceNotFoundException for a drop id.
+     *
+     * @param dropId drop id
+     * @return ResourceNotFoundException object
+     */
 
     private ResourceNotFoundException throwResourceNotFoundException(Long dropId) {
         return new ResourceNotFoundException("User Not found with user id: " + dropId);

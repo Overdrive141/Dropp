@@ -8,6 +8,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserDetailTransformer {
 
+    /**
+     * This method transforms UserRequest object into UserDetail object.
+     *
+     * @param userRequest UserRequest object
+     * @return UserDetail object
+     */
+
     public UserDetail map(UserRequest userRequest) {
         return UserDetail.builder()
                 .email(userRequest.getEmail())
@@ -18,6 +25,13 @@ public class UserDetailTransformer {
                 .avatar(userRequest.getAvatar())
                 .build();
     }
+
+    /**
+     * This method transforms UserDetail object into UserDetailDTO object.
+     *
+     * @param userDetail UserDetail object
+     * @return UserDetailDTO object
+     */
 
     public UserDetailDTO map(UserDetail userDetail) {
         return UserDetailDTO.builder()

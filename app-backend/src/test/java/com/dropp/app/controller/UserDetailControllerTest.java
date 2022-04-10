@@ -41,14 +41,12 @@ public class UserDetailControllerTest {
 
     @Test
     public void testGetUserByEmailIdOrUsername() {
-        doNothing().when(validationService).validate(anyString());
         when(userDetailService.getUserByEmailOrUsername(anyString())).thenReturn(mock(UserDetailDTO.class));
         assertNotNull(controller.getUserByEmailIdOrUsername("user1", header));
     }
 
     @Test
     public void testAddUser() {
-        doNothing().when(validationService).validate(anyString());
         when(userDetailService.addUser(any(UserRequest.class))).thenReturn(mock(UserDetailDTO.class));
         assertNotNull(controller.addUser(userRequest, header));
     }

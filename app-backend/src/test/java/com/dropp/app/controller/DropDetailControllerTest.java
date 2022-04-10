@@ -33,70 +33,70 @@ public class DropDetailControllerTest {
 
     @Test
     public void testGetDrop() {
-        doNothing().when(validationService).validate(anyString());
+        when(validationService.validate(anyString())).thenReturn(1l);
         when(dropDetailService.getDrop(anyLong(), anyLong())).thenReturn(mock(DropDetailDTO.class));
-        assertNotNull(controller.getDrop(1l, 1l, header));
+        assertNotNull(controller.getDrop(1l, header));
     }
 
     @Test
     public void testAddDropForUser() {
-        doNothing().when(validationService).validate(anyString());
+        when(validationService.validate(anyString())).thenReturn(1l);
         when(dropDetailService.addDrop(anyLong(), any(DropRequest.class))).thenReturn(mock(DropDetailDTO.class));
-        assertNotNull(controller.addDropForUser(1l, mock(DropRequest.class), header));
+        assertNotNull(controller.addDropForUser(mock(DropRequest.class), header));
     }
 
     @Test
     public void testGetDropsForUser() {
-        doNothing().when(validationService).validate(anyString());
+        when(validationService.validate(anyString())).thenReturn(1l);
         when(dropDetailService.getDropsForUser(anyLong())).thenReturn(mock(List.class));
-        assertNotNull(controller.getDropsForUser(1l, header));
+        assertNotNull(controller.getDropsForUser(header));
     }
 
     @Test
     public void testStarDrop() {
-        doNothing().when(validationService).validate(anyString());
+        when(validationService.validate(anyString())).thenReturn(1l);
         when(dropDetailService.starDrop(anyLong(), anyLong())).thenReturn(mock(DropDetailDTO.class));
-        assertNotNull(controller.starDrop(1l, 1l, header));
+        assertNotNull(controller.starDrop(1l, header));
     }
 
     @Test
     public void testUnstarDrop() {
-        doNothing().when(validationService).validate(anyString());
+        when(validationService.validate(anyString())).thenReturn(1l);
         when(dropDetailService.unstarDrop(anyLong(), anyLong())).thenReturn(mock(DropDetailDTO.class));
-        assertNotNull(controller.unstarDrop(1l, 1l, header));
+        assertNotNull(controller.unstarDrop(1l, header));
     }
 
     @Test
     public void testGetStarredDrops() {
-        doNothing().when(validationService).validate(anyString());
+        when(validationService.validate(anyString())).thenReturn(1l);
         when(dropDetailService.getStarredDrops(anyLong())).thenReturn(mock(List.class));
-        assertNotNull(controller.getStarredDrops(1l, header));
+        assertNotNull(controller.getStarredDrops(header));
     }
 
     @Test
     public void testExploreDrop() {
-        doNothing().when(validationService).validate(anyString());
+        when(validationService.validate(anyString())).thenReturn(1l);
         when(dropDetailService.exploreDrop(anyLong(), anyLong())).thenReturn(mock(DropDetailDTO.class));
-        assertNotNull(controller.exploreDrop(1l, 1l, header));
+        assertNotNull(controller.exploreDrop(1l, header));
     }
 
     @Test
     public void testGetAllDrops() {
-        doNothing().when(validationService).validate(anyString());
+        when(validationService.validate(anyString())).thenReturn(1l);
         when(dropDetailService.getAllDropsForUser(anyLong(), any(BigDecimal.class), any(BigDecimal.class), anyLong())).thenReturn(mock(List.class));
-        assertNotNull(controller.getAllDrops(1l, BigDecimal.valueOf(12.43), BigDecimal.valueOf(2.33), 100l, header));
+        assertNotNull(controller.getAllDrops(BigDecimal.valueOf(12.43), BigDecimal.valueOf(2.33), 100l, header));
     }
 
     @Test
     public void testGetDropCountByUser() {
-        doNothing().when(validationService).validate(anyString());
+        when(validationService.validate(anyString())).thenReturn(1l);
         when(dropDetailService.getDropCountByUser(any(Instant.class), any(Instant.class))).thenReturn(mock(List.class));
         assertNotNull(controller.getDropCountByUser(header));
     }
 
     @Test
     public void testGetExploreCountByUser() {
-        doNothing().when(validationService).validate(anyString());
+        when(validationService.validate(anyString())).thenReturn(1l);
         when(dropDetailService.getExploreCountByUser(any(Instant.class), any(Instant.class))).thenReturn(mock(List.class));
         assertNotNull(controller.getExploreCountByUser(header));
     }
